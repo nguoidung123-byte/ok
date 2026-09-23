@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIMLOCK</title>
+    <style>
+        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        .card { background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; }
+        h2 { margin-top: 0; color: #38bdf8; font-size: 20px; }
+        input[type="text"] { width: 100%; padding: 12px; margin: 15px 0 10px 0; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; text-align: center; font-size: 16px; outline: none; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #0284c7; color: white; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #0369a1; }
+        button:disabled { background: #475569; cursor: not-allowed; }
+        .error { color: #f43f5e; margin-top: 10px; font-size: 14px; display: none; }
+
+        .buy-key-box { background: #0f172a; border: 1px dashed #f43f5e; border-radius: 8px; padding: 12px; margin-top: 15px; text-align: left; }
+        .buy-key-box p { margin: 0 0 8px 0; font-size: 13px; color: #cbd5e1; line-height: 1.4; }
+        .admin-btns { display: flex; gap: 8px; margin-top: 8px; }
+        .btn-copy-user { background: #e11d48; padding: 8px; font-size: 12px; margin: 0; width: 50%; }
+        .btn-copy-user:hover { background: #be123c; }
+        .toast { color: #34d399; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
+
+        .menu-container { display: none; text-align: left; max-height: 85vh; overflow-y: auto; }
+        .feature-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .3s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .inject-box { background: #0f172a; padding: 12px; border-radius: 8px; margin-top: 15px; border: 1px solid #334155; text-align: center; }
+        .progress-bar-container { width: 100%; background-color: #334155; height: 10px; border-radius: 5px; margin: 10px 0 5px 0; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #10b981); transition: width 0.1s linear; }
+        .inject-status { font-size: 12px; color: #38bdf8; font-weight: bold; font-family: monospace; }
+        .btn-inject { background: #10b981; margin-top: 10px; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-inject:hover { background: #059669; }
+
+        .console-log { background: #020617; border: 1px solid #1e293b; border-radius: 6px; padding: 8px; font-family: monospace; font-size: 11px; color: #38bdf8; text-align: left; height: 75px; overflow-y: auto; margin-top: 8px; display: none; }
+        .log-entry { margin: 2px 0; }
+        .log-success { color: #34d399; }
+        .log-warn { color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="key-section">
+        <h2>NHẬP KEY KÍCH HOẠT</h2>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 5px;">Vui lòng nhập Key chính chủ để sử dụng Menu</p>
+        <input type="text" id="key-input" placeholder="Dán Key vào đây...">
+        <input type="text" id="hidden-copy-input" style="position: absolute; left: -9999px; top: -9999px;">
+        <button onclick="checkKey()">KÍCH HOẠT MENU</button>
+        <div class="error" id="error-msg">Key không chính xác!</div>
+        <div class="buy-key-box">
+            <p>📌 <b>Chưa có Key?</b> Liên hệ TikTok Admin để mua Key chính chủ:</p>
+            <div class="admin-btns">
+                <button class="btn-copy-user" onclick="copyText('@usernames3677', 'Đã copy Admin 1: @usernames3677')">📋 Copy Admin 1</button>
+                <button class="btn-copy-user" onclick="copyText('@luccanhtham2', 'Đã copy Admin 2: @luccanhtham2')">📋 Copy Admin 2</button>
+            </div>
+            <div class="toast" id="copy-toast"></div>
+        </div>
+    </div>
+
+    <div class="card menu-container" id="menu-section">
+        <h2 style="text-align: center; margin-bottom: 5px;">MOD MENU VIP</h2>
+        <p style="text-align: center; font-size: 12px; color: #10b981; margin-top: 0;">● Status: Safe Anti-Cheat</p>
+
+        <div class="feature-item"><span>Aim Cổ</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>Aim Đầu</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>Aim Body</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>2 Viên Aim Ngực</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>HS DragV2</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>ESP</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>ESP Line</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>ESP Highlight</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+        <div class="feature-item"><span>Spam Keo Nhanh</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+
+        <div class="inject-box">
+            <div class="inject-status" id="inject-text">SẴN SÀNG INJECT (0%)</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="console-log" id="console-log"></div>
+            <button class="btn-inject" id="btn-inject" onclick="startInject()">⚡ KÍCH HOẠT CHỨC NĂNG ⚡</button>
+        </div>
+    </div>
+
+    <script>
+        const VALID_KEY = "AimLock";
+
+        function checkKey() {
+            const input = document.getElementById('key-input').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+
+            if (!input) {
+                errorMsg.innerText = "Vui lòng nhập Key!";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (input === VALID_KEY) {
+                errorMsg.style.display = 'none';
+                document.getElementById('key-section').style.display = 'none';
+                document.getElementById('menu-section').style.display = 'block';
+            } else {
+                errorMsg.innerText = "Key không chính xác!";
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function startInject() {
+            const btn = document.getElementById('btn-inject');
+            const progressBar = document.getElementById('progress-bar');
+            const injectText = document.getElementById('inject-text');
+            const consoleLog = document.getElementById('console-log');
+
+            btn.disabled = true;
+            consoleLog.style.display = 'block';
+            consoleLog.innerHTML = '';
+
+            let percent = 0;
+            const logs = [
+                { p: 10, text: "[SYS] Kết nối Game Process ID...", class: "" },
+                { p: 25, text: "[BYPASS] Vô hiệu hóa Anti-Cheat Scan...", class: "log-warn" },
+                { p: 45, text: "[HOOK] Can thiệp Memory Address: 0x7F8B...", class: "" },
+                { p: 65, text: "[INJECT] Ghi đè dữ liệu Head/Body Offsets...", class: "" },
+                { p: 85, text: "[BYPASS] Khóa gói tin báo cáo về máy chủ...", class: "log-warn" },
+                { p: 100, text: "[SUCCESS] Kích hoạt thành công Anti-Ban v2.4!", class: "log-success" }
+            ];
+            let logIndex = 0;
+
+            const interval = setInterval(() => {
+                percent += Math.floor(Math.random() * 4) + 1;
+                if (logIndex < logs.length && percent >= logs[logIndex].p) {
+                    const item = logs[logIndex];
+                    const entry = document.createElement('div');
+                    entry.className = `log-entry ${item.class}`;
+                    entry.innerText = item.text;
+                    consoleLog.appendChild(entry);
+                    consoleLog.scrollTop = consoleLog.scrollHeight;
+                    logIndex++;
+                }
+                if (percent >= 100) {
+                    percent = 100;
+                    clearInterval(interval);
+                    progressBar.style.width = '100%';
+                    injectText.innerText = 'INJECT THÀNH CÔNG! (100%)';
+                    injectText.style.color = '#10b981';
+                    btn.innerText = '✔ ĐÃ KÍCH HOẠT';
+                    btn.style.background = '#059669';
+                } else {
+                    progressBar.style.width = percent + '%';
+                    injectText.innerText = `ĐANG CAN THIỆP HỆ THỐNG... (${percent}%)`;
+                }
+            }, 70);
+        }
+
+        function copyText(text, successMsg) {
+            const hiddenInput = document.getElementById('hidden-copy-input');
+            hiddenInput.value = text;
+            hiddenInput.select();
+            hiddenInput.setSelectionRange(0, 99999);
+            let copied = false;
+            try { copied = document.execCommand("copy"); } catch (err) { copied = false; }
+            if (!copied && navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text);
+            }
+            const toast = document.getElementById('copy-toast');
+            toast.innerText = successMsg;
+            toast.style.display = 'block';
+            setTimeout(function() { toast.style.display = 'none'; }, 3000);
+        }
+    </script>
+</body>
+</html>
